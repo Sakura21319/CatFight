@@ -1,0 +1,16 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const ts = require(process.env.COCOS_TYPESCRIPT || 'C:/ProgramData/cocos/editors/Creator/3.8.8/resources/app.asar.unpacked/node_modules/typescript');
+const source = fs.readFileSync('assets/scripts/CatRules.ts', 'utf8');
+const context = { exports: {} };
+vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, context);
+const groups = points => JSON.parse(JSON.stringify(context.exports.proximityGroups(points.map(([x,z]) => ({x,z})), 1.05)));
+assert.deepEqual(groups([]), []);
+assert.deepEqual(groups([[0,0]]), [[0]]);
+assert.deepEqual(groups([[0,0],[0.7,0],[4,0]]), [[0,1],[2]]);
+assert.deepEqual(groups([[0,0],[0.7,0],[1.4,0]]), [[0,1,2]]);
+assert.deepEqual(groups([[0,0],[0.7,0],[4,0],[4.7,0]]), [[0,1],[2,3]]);
+assert.deepEqual(groups([[0,0],[1.05,0]]), [[0,1]]);
+assert.deepEqual(groups([[0,0],[1.051,0]]), [[0],[1]]);
+console.log('PASS: 7 proximity cases (including three-cat chains and independent pairs)');
