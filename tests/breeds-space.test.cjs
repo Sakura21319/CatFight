@@ -7,7 +7,7 @@ for(const breed of BREEDS){const a=coatPixels(breed,123),b=coatPixels(breed,123)
 assert.notDeepEqual(coatPixels(BREEDS[0],42),coatPixels(BREEDS[2],42));
 const {pairSpacing,HISS_DISTANCE,FIGHT_DISTANCE,THREAT_TRIGGER_DISTANCE,THREAT_SPEED,THREAT_DURATION}=load('GardenSpace');
 assert.equal(THREAT_SPEED,10);assert.ok(THREAT_DURATION<0.35,'Ground-paw threat should release quickly after the pounce');assert.ok(THREAT_TRIGGER_DISTANCE<HISS_DISTANCE*2,'Ground-paw threat is reserved for nearby cats');
-const {audioAllowed}=load('AudioPolicy');assert.equal(audioAllowed(true,false),false);assert.equal(audioAllowed(true,true),true);assert.equal(audioAllowed(false,true),false);
+const {audioAllowed,backgroundMusicAllowed,soundEffectAllowed}=load('AudioPolicy');assert.equal(audioAllowed(true,false),false);assert.equal(audioAllowed(true,true),true);assert.equal(audioAllowed(false,true),false);assert.equal(backgroundMusicAllowed(true,true,true),false,'Gallery must mute background music');assert.equal(backgroundMusicAllowed(true,true,false),true,'Background music remains available outside Gallery');assert.equal(soundEffectAllowed(true,true,true,'fight'),false,'Gallery must mute fight sounds');assert.equal(soundEffectAllowed(true,true,true,'confrontation'),false,'Gallery must mute confrontation sounds');assert.equal(soundEffectAllowed(true,true,true,'place'),true,'Cat placement sounds remain available');assert.equal(soundEffectAllowed(true,true,false,'fight'),true,'Fight sounds remain available outside Gallery');
 let a={x:-0.2,z:0},b={x:0.2,z:0};
 for(let i=0;i<120;i++)({a,b}=pairSpacing(a,b,HISS_DISTANCE,1/60));
 assert.ok(Math.abs(b.x-a.x-HISS_DISTANCE)<0.0001);assert.ok(Math.abs(a.x+b.x)<0.0001);

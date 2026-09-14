@@ -192,7 +192,7 @@ export function poseVoxelCat(rig:VoxelRig,state:CatState,time:number,dt=1,headYa
         const front=i%2===1;
         const sideKick=fightStyle===2?Math.sin(time*Math.PI*12+phase)*76:0;
         const humanStep=front?(rig.strutArmPitches?.[i]??-18):62+Math.sin(time*14+phase)*34;
-        const swing=threat?(front?-76:0):lie?0:crouch?(front?-24:18):fight?(fightStyle===2?sideKick:fightStyle===3?(front?-58+Math.sin(time*Math.PI*6+phase)*9:16+Math.sin(time*Math.PI*8+phase)*20):fightStyle===1?(front?-72+Math.sin(time*Math.PI*7+phase)*12:18+Math.sin(time*Math.PI*10+phase)*34):(front?-58+Math.sin(time*Math.PI*8+phase)*14:Math.sin(time*Math.PI*14+phase)*72)):leap?52+Math.sin(time*18+phase)*12:strut?humanStep:run?Math.sin(time*16+phase)*42:state==='Walk'?Math.sin(time*11+phase)*30:hiss?(front?-24:11):heal&&healSitting?(front?-7:-62):0;
+        const swing=threat?(front?-76:0):lie?0:crouch?(front?-24:18):fight?(fightStyle===2?sideKick:fightStyle===3?(front?-58+Math.sin(time*Math.PI*9+phase)*9:16+Math.sin(time*Math.PI*12+phase)*20):fightStyle===1?(front?-72+Math.sin(time*Math.PI*7+phase)*12:18+Math.sin(time*Math.PI*10+phase)*34):(front?-58+Math.sin(time*Math.PI*8+phase)*14:Math.sin(time*Math.PI*14+phase)*72)):leap?52+Math.sin(time*18+phase)*12:strut?humanStep:run?Math.sin(time*16+phase)*42:state==='Walk'?Math.sin(time*11+phase)*30:hiss?(front?-24:11):heal&&healSitting?(front?-7:-62):0;
         // In the threat pose the paws fan away from the centreline.  With the
         // current left/right joint convention the left paw needs -Z rotation
         // and the right paw +Z rotation; the reverse would cross them.

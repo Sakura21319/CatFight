@@ -73,6 +73,9 @@ assert.equal(rig.body.rotation[2],-82,'Fourth fight style turns the belly toward
 assert.equal(rig.body.position[1],0.27,'Fourth fight style keeps the bodies low and interlocked');
 assert.equal(rig.head.rotation[1],38,'Fourth fight style offsets the head instead of facing the opponent');
 assert.ok(rig.legs[1].rotation[0]<-35&&rig.legs[3].rotation[0]<-35,'Fourth fight style wraps both forelegs around the bodies');
+const grappleTime=0.18,expectedFront=i=>-58+Math.sin(grappleTime*Math.PI*9+(i===1?Math.PI:0))*9,expectedRear=i=>16+Math.sin(grappleTime*Math.PI*12+(i===2?Math.PI:0))*20;
+for(const i of [1,3])assert.ok(Math.abs(rig.legs[i].rotation[0]-expectedFront(i))<1e-9,'Fourth fight style forelegs must use the faster swing rate');
+for(const i of [0,2])assert.ok(Math.abs(rig.legs[i].rotation[0]-expectedRear(i))<1e-9,'Fourth fight style hind legs must use the faster swing rate');
 poseVoxelCat(rig,'Fight',0.18,1,0,-1,1,false,3);
 assert.equal(rig.body.rotation[2],82,'Fourth fight style mirrors the belly roll for the second cat');
 poseVoxelCat(rig,'Threat',0.2);

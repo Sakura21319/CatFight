@@ -1,9 +1,9 @@
 import { _decorator, Component, Node, Camera, Color, Material, Mesh, MeshRenderer, Texture2D, Sprite, SpriteFrame, Rect, Size, assetManager, primitives, utils, Vec3, input, Input, EventTouch, EventMouse, EventKeyboard, KeyCode, geometry, Canvas, UITransform, Label, Layers, view, Graphics } from 'cc';
-import { CatState, proximityGroups } from './CatRules';
+import { CatState, proximityGroups, shouldTriggerGum } from './CatRules';
 import { torsoGeometry } from './CatSurface';
 import { createVoxelCat, poseVoxelCat, VoxelRig, BODY_TYPES } from './VoxelCat';
 import { BREEDS, Breed, coatPixels } from './CatBreeds';
-import { pairSpacing, HISS_DISTANCE, HISS_DISTANCE_MIN, HISS_DISTANCE_MAX, FIGHT_DISTANCE, THREAT_TRIGGER_DISTANCE, THREAT_SPEED, THREAT_STOP_DISTANCE, THREAT_DURATION } from './GardenSpace';
+import { pairSpacing, HISS_DISTANCE, HISS_DISTANCE_MIN, HISS_DISTANCE_MAX, FIGHT_DISTANCE, THREAT_SPEED, THREAT_STOP_DISTANCE, THREAT_DURATION } from './GardenSpace';
 import { CatEnvironment } from './CatEnvironment';
 import { GardenAudio } from './GardenAudio';
 const { ccclass } = _decorator;
@@ -100,7 +100,6 @@ export class CatGarden extends Component {
     private touchPoints=new Map<number,{x:number;y:number}>();
     private pinchDistance=0;
     private readonly radius=1.9;
-    private previewFightStyle=0;
     private spriteRoot!:Node;
     private backgroundNode!:Node;
     private roadCatFrames:Record<RoadCatExpression,SpriteFrame|null>={normal:null,hit:null,hiss:null};
@@ -305,11 +304,9 @@ export class CatGarden extends Component {
         const c=cn.addComponent(Camera);c.projection=Camera.ProjectionType.ORTHO;c.orthoHeight=this.uiHeight;c.clearFlags=Camera.ClearFlag.DEPTH_ONLY;c.visibility=Layers.Enum.UI_2D;c.priority=10;c.far=2000;canvas.cameraComponent=c;
         this.backgroundNode=new Node('First level 2D road background');this.backgroundNode.layer=Layers.Enum.UI_2D;this.ui.addChild(this.backgroundNode);this.backgroundNode.addComponent(UITransform).setContentSize(this.uiWidth,this.uiHeight);this.backgroundNode.addComponent(Sprite);this.backgroundNode.active=false;this.backgroundNode.setSiblingIndex(0);
         this.spriteRoot=new Node('2D cat and traffic sprites');this.spriteRoot.layer=Layers.Enum.UI_2D;this.ui.addChild(this.spriteRoot);this.spriteRoot.setSiblingIndex(1);
-        this.button('切换场地',-520,()=>{this.environment.toggle();this.environment.view(this.yaw);},-302);
-        this.button('远距演示',-330,()=>this.farDemo(),-260);this.button('缠斗演示',-110,()=>this.fightDemo(),-260);this.button('口香糖演示',110,()=>this.healDemo(),-260);this.button('老吴撼地掌',330,()=>this.triggerThreat(),-260);
+        this.button('切换场景',-520,()=>{this.environment.toggle();this.environment.view(this.yaw);},-302);
+        this.button('清空',-330,()=>this.clear(),-302);
         this.status=this.text(this.ui,'Status','',-10,19);
-        this.button('拉近',-120,()=>{this.closeup=false;this.zoom=Math.max(1.5,this.zoom-0.7);this.orbit();},-205);
-        this.button('拉远',120,()=>{this.closeup=false;this.zoom=Math.min(9,this.zoom+0.7);this.orbit();},-205);
         this.buildingGallery=false;this.makeLevelUI();this.makeMainMenuUI();this.makeNavigationUI();
     }
     private button(title:string,x:number,action:()=>void,y:number,parent:Node=this.ui,width?:number,height?:number){
@@ -436,6 +433,7 @@ export class CatGarden extends Component {
     }
     private showModeUI(){
         const gallery=this.mode==='Gallery';this.galleryNodes.forEach(n=>n.active=gallery);
+        this.sound.setGalleryMode(gallery||(this.mode==='Settings'&&this.settingsReturnMode==='Gallery'));
         if(this.status)this.status.node.active=false;
         if(this.mainMenu)this.mainMenu.active=this.mode==='MainMenu';
         if(this.settingsUi)this.settingsUi.active=this.mode==='Settings';
@@ -540,16 +538,6 @@ export class CatGarden extends Component {
     }
     private orbit(){this.camera.node.setPosition(Math.sin(this.yaw)*12,Math.tan(this.elevation)*12,Math.cos(this.yaw)*12);this.camera.node.lookAt(new Vec3(0,0.15,0));this.camera.orthoHeight=this.zoom;this.environment.view(this.yaw);}
     private clear(){this.closeup=false;this.roadLeftHeld=false;this.roadRightHeld=false;this.resetRoadJoystick();this.roadInstinctStrength=0;this.roadInstinctTargetX=0;this.roadPancake=false;this.roadPancakeTarget=null;this.roadHitDelay=0;this.roadRushAvailable=true;this.roadRushActive=false;this.orbit();for(const c of this.cats){c.root.destroy();c.spriteNode?.destroy();c.coat.destroy();c.texture.destroy();}for(const car of this.roadCars){car.root.destroy();car.spriteNode?.destroy();}for(const hole of this.roadHoles)hole.node.destroy();for(const n of this.levelDecor)n.destroy();this.cats=[];this.roadCars=[];this.roadHoles=[];this.roadFilledHoles=0;this.levelDecor=[];this.roadPlayer=null;this.wuPlayer=null;this.oldWu=null;this.sound.setCatsPresent(false);}
-    private demo(count:number){this.clear();this.zoom=3.4;this.orbit();this.spawn(new Vec3(-0.75,0,0));this.spawn(new Vec3(0.75,0,0));if(count===3)this.spawn(new Vec3(0,0,1.3));}
-    private farDemo(){this.clear();this.zoom=5.5;this.orbit();this.spawn(new Vec3(-3.2,0,0));this.spawn(new Vec3(3.2,0,0));}
-    private fightDemo(){this.demo(2);const [a,b]=this.cats;this.enterFight(a,b,this.previewFightStyle);this.previewFightStyle=(this.previewFightStyle+1)%4;a.health=b.health=72;this.sound.play('fight');}
-    private triggerThreat(){
-        if(this.cats.length<2)this.demo(2);
-        const [a,b]=this.cats;if(!a||!b||[a,b].some(c=>['Fight','Heal','Strut','Leap','Threat'].indexOf(c.state)>=0))return;
-        if(Vec3.distance(a.root.position,b.root.position)>THREAT_TRIGGER_DISTANCE)return;
-        const actor=Math.random()<0.5?a:b,passive=actor===a?b:a;this.enterThreat(actor,passive);
-    }
-    private healDemo(){this.demo(2);const [a,b]=this.cats;a.health=b.health=58;this.snapSpace(a,b,HISS_DISTANCE);this.enterHeal(a,b.root.position);this.enterHeal(b,a.root.position);}
     private isWorld(x:number,y:number){const c=this.ui.getComponent(Canvas)!.cameraComponent!,p=this.ui.getComponent(UITransform)!.convertToNodeSpaceAR(c.screenToWorld(new Vec3(x,y,0)));return p.y>-235&&p.y<225;}
     private begin(x:number,y:number){if(this.mode!=='Gallery')return;if(this.isWorld(x,y)&&!this.closeup)this.pointer={x,y,lastX:x,lastY:y,dragged:false};}
     private move(x:number,y:number){const p=this.pointer;if(!p)return;if(Math.abs(x-p.x)+Math.abs(y-p.y)>8)p.dragged=true;if(p.dragged){this.yaw-=(x-p.lastX)*0.006;this.elevation=Math.max(0.78,Math.min(1.12,this.elevation+(y-p.lastY)*0.003));this.orbit();}p.lastX=x;p.lastY=y;}
@@ -658,16 +646,16 @@ export class CatGarden extends Component {
                     }
                 }else if(a.state==='Hiss'){
                     a.timer-=dt;b.timer-=dt;if(a.timer<=0)this.chooseLook(a);if(b.timer<=0)this.chooseLook(b);
-                    if(a.looking&&b.looking){a.health=Math.max(0,a.health-28);b.health=Math.max(0,b.health-28);this.enterFight(a,b);this.sound.play('fight');}
+                    if(a.looking&&b.looking){if(shouldTriggerGum(Math.random(),false))this.startGumPair(a,b);else{a.health=Math.max(0,a.health-28);b.health=Math.max(0,b.health-28);this.enterFight(a,b);this.sound.play('fight');}}
                 }else if(a.state==='Fight'){
                     a.timer-=dt;b.timer=a.timer;
                     if(a.timer<=0){
-                    const distance=this.randomHissDistance();a.hissDistance=b.hissDistance=distance;this.snapSpace(a,b,distance);this.enterHeal(a,b.root.position);this.enterHeal(b,a.root.position);
+                        if(shouldTriggerGum(Math.random(),true))this.startGumPair(a,b);else this.returnPairToHiss(a,b);
                     }
                 }else if(a.state==='Heal'){
                     a.timer-=dt;b.timer=a.timer;
                     a.health=Math.min(a.maxHealth,a.health+dt*7);b.health=Math.min(b.maxHealth,b.health+dt*7);
-                    if(a.timer<=0){const distance=this.randomHissDistance();a.hissDistance=b.hissDistance=distance;this.snapSpace(a,b,distance);this.enterHiss(a,b.root.position,distance);this.enterHiss(b,a.root.position,distance);this.sound.playRandomConfrontation();}
+                    if(a.timer<=0)this.returnPairToHiss(a,b);
                 }
             }else{
                 const c=group[0];if(c.state==='Threat'){c.timer-=dt;if(c.timer<=0){c.state='Idle';c.timer=1.5;c.threatCooldown=1.5;c.threatTarget=null;}continue;}if(['Idle','Walk','Run','Crouch','Lie'].indexOf(c.state)<0){c.state='Idle';c.timer=1.5;}
@@ -684,6 +672,8 @@ export class CatGarden extends Component {
     private snapSpace(a:Cat,b:Cat,target:number){this.space(a,b,target,1,100);}
     private face(c:Cat,p:Readonly<Vec3>){const d=Vec3.subtract(new Vec3(),p,c.root.position);c.root.setRotationFromEuler(0,Math.atan2(d.x,d.z)*180/Math.PI,0);}
     private randomHissDistance(){return HISS_DISTANCE_MIN+Math.random()*(HISS_DISTANCE_MAX-HISS_DISTANCE_MIN);}
+    private startGumPair(a:Cat,b:Cat){const distance=this.randomHissDistance();a.hissDistance=b.hissDistance=distance;this.snapSpace(a,b,distance);this.enterHeal(a,b.root.position);this.enterHeal(b,a.root.position);}
+    private returnPairToHiss(a:Cat,b:Cat){const distance=this.randomHissDistance();a.hissDistance=b.hissDistance=distance;this.snapSpace(a,b,distance);this.enterHiss(a,b.root.position,distance);this.enterHiss(b,a.root.position,distance);this.sound.playRandomConfrontation();}
     private enterHiss(c:Cat,p:Readonly<Vec3>,distance=c.hissDistance||HISS_DISTANCE){
         c.hissDistance=distance;
         const bodyDirections=[-110,-80,-55,-35,-20,20,35,55,80,110];

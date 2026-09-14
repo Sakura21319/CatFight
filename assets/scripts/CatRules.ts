@@ -1,5 +1,8 @@
 export type CatState = 'Idle' | 'Walk' | 'Run' | 'Crouch' | 'Lie' | 'Strut' | 'Leap' | 'Threat' | 'Hiss' | 'Fight' | 'Heal' | 'Recover';
 export interface Point { x: number; z: number }
+export const RANDOM_GUM_CHANCE=0.08;
+export const POST_FIGHT_GUM_CHANCE=0.78;
+export function shouldTriggerGum(roll:number,afterFight:boolean){return roll<(afterFight?POST_FIGHT_GUM_CHANCE:RANDOM_GUM_CHANCE);}
 /** Connected proximity groups prevent the end cats in a three-cat chain fighting. */
 export function proximityGroups(points: Point[], radius: number): number[][] {
     const seen = new Set<number>();
