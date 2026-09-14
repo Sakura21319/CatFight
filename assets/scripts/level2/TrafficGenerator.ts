@@ -44,13 +44,13 @@ export class SafeCorridor{
                 let candidates=[lane];
                 if(lane>0)candidates.push(lane-1);
                 if(lane<TRAFFIC_LANE_Y.length-1)candidates.push(lane+1);
-                candidates=candidates.filter(candidate=>open.includes(candidate));
+                candidates=candidates.filter(candidate=>open.indexOf(candidate)>=0);
                 if(!candidates.length)candidates=open.slice().sort((a,b)=>Math.abs(a-lane)-Math.abs(b-lane)).slice(0,2);
-                lane=this.rng.pick(candidates.concat(candidates.includes(lane)?[lane,lane]:[]));
-            }else if(!open.includes(lane))lane=this.rng.pick(open);
+                lane=this.rng.pick(candidates.concat(candidates.indexOf(lane)>=0?[lane,lane]:[]));
+            }else if(open.indexOf(lane)<0)lane=this.rng.pick(open);
             this.nodes.push({x:worldX,lane});
             const zone=trafficZoneAt(worldX);
-            worldX+=['jam','construction','accident'].includes(zone.kind)?this.rng.range(360,470):this.rng.range(500,680);
+            worldX+=['jam','construction','accident'].indexOf(zone.kind)>=0?this.rng.range(360,470):this.rng.range(500,680);
         }
     }
 
@@ -95,7 +95,7 @@ export class TrafficGenerator{
             let worldX=Math.max(TRAFFIC_SAFE_START_END+220,zone.start+180);
             while(worldX<Math.min(zone.end,TRAFFIC_LEVEL_LENGTH-260)){
                 this.generateAt(worldX,zone.kind);
-                const dense=['jam','construction','accident'].includes(zone.kind);
+                const dense=['jam','construction','accident'].indexOf(zone.kind)>=0;
                 worldX+=dense?this.rng.range(135,195):this.rng.range(235,315);
             }
         }
@@ -115,7 +115,7 @@ export class TrafficGenerator{
         const reserved=new Set([Math.floor(safeLane),Math.ceil(safeLane)].map(value=>clamp(value,0,3)));
         const available=openTrafficLanesAt(worldX).filter(lane=>!reserved.has(lane));
         if(!available.length)return;
-        const dense=['jam','construction','accident'].includes(eventKind);
+        const dense=['jam','construction','accident'].indexOf(eventKind)>=0;
         const wanted=Math.min(available.length,dense?(this.rng.next()<.75?available.length:Math.max(1,available.length-1)):(this.rng.next()<.48?2:1));
         const shuffled=available.slice().sort(()=>this.rng.next()-.5);
         for(let i=0;i<wanted;i++){
@@ -139,7 +139,7 @@ export class TrafficGenerator{
 
     private makeCandidate(encounterX:number,lane:number,eventKind:GeneratedTrafficVehicle['eventKind']){
         const kind=this.chooseKind(),dims=vehicleDimensions(kind),direction=trafficLaneDirection(lane);
-        const congested=['jam','construction','accident'].includes(eventKind);
+        const congested=['jam','construction','accident'].indexOf(eventKind)>=0;
         const speed=congested?(direction>0?this.rng.range(16,48):-this.rng.range(26,58)):(direction>0?this.rng.range(70,112):-this.rng.range(125,168));
         const encounterTime=encounterX/TRAFFIC_CAT_FORWARD_SPEED;
         const vehicle:GeneratedTrafficVehicle={
@@ -195,7 +195,7 @@ export class TrafficGenerator{
 
     private forceMerge(encounterX:number,lane:number,targetLane:number,kind:TrafficVehicleKind){
         const zone=trafficZoneAt(encounterX),dims=vehicleDimensions(kind),direction=trafficLaneDirection(lane);
-        const speed=['construction','accident'].includes(zone.kind)?(direction>0?34:-42):(direction>0?78:-140);
+        const speed=['construction','accident'].indexOf(zone.kind)>=0?(direction>0?34:-42):(direction>0?78:-140);
         const encounterTime=encounterX/TRAFFIC_CAT_FORWARD_SPEED;
         const vehicle:GeneratedTrafficVehicle={
             id:this.nextId++,kind,lane,targetLane,worldX:0,startWorldX:encounterX-speed*encounterTime,speed,baseSpeed:speed,
@@ -211,7 +211,7 @@ export class TrafficGenerator{
             const zone=trafficZoneAt(encounterX),open=openTrafficLanesAt(encounterX),safeY=this.corridor.yAt(encounterX);
             const lanes=open.slice().sort((a,b)=>Math.abs(TRAFFIC_LANE_Y[b]-safeY)-Math.abs(TRAFFIC_LANE_Y[a]-safeY));
             for(const lane of lanes){
-                const direction=trafficLaneDirection(lane),congested=['jam','construction','accident'].includes(zone.kind),speed=congested?(direction>0?30:-40):(direction>0?80:-140);
+                const direction=trafficLaneDirection(lane),congested=['jam','construction','accident'].indexOf(zone.kind)>=0,speed=congested?(direction>0?30:-40):(direction>0?80:-140);
                 const encounterTime=encounterX/TRAFFIC_CAT_FORWARD_SPEED,dims=vehicleDimensions('truck');
                 const vehicle:GeneratedTrafficVehicle={
                     id:this.nextId++,kind:'truck',lane,targetLane:lane,worldX:0,startWorldX:encounterX-speed*encounterTime,speed,baseSpeed:speed,

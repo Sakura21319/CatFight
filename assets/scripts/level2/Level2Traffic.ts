@@ -537,7 +537,7 @@ export class Level2Traffic extends Component {
     private updateVehicleAI(dt: number) {
         for (const vehicle of this.vehicles) {
             let target = vehicle.baseSpeed;
-            const dense = ['jam', 'construction', 'accident'].includes(vehicle.eventKind);
+            const dense = ['jam', 'construction', 'accident'].indexOf(vehicle.eventKind) >= 0;
             if (dense) {
                 const wave = .18 + .82 * ((Math.sin(this.elapsed * vehicle.jamRate + vehicle.jamPhase) + 1) / 2);
                 target *= wave;
