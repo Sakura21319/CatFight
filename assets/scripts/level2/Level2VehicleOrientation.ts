@@ -20,8 +20,13 @@ export class Level2VehicleOrientation extends Component {
         if (!this.vehicleLayer || !this.vehicleLayer.activeInHierarchy) return;
 
         for (const vehicle of this.vehicleLayer.children) {
-            // Level 2 uses the upper two lanes for +X traffic and the lower
-            // two lanes for -X traffic. Lane changes never cross directions.
+            // Bus art is drawn horizontally by Level2Traffic itself.
+            if (vehicle.name.startsWith('Traffic bus')) {
+                vehicle.setRotationFromEuler(0, 0, vehicle.position.y >= 0 ? 0 : 180);
+                continue;
+            }
+            // Existing road-cars sprites were authored vertically for level 1.
+            // Upper two lanes move +X, lower two lanes move -X.
             vehicle.setRotationFromEuler(0, 0, vehicle.position.y >= 0 ? -90 : 90);
         }
     }
