@@ -1,14 +1,18 @@
 import { _decorator, Component, Node } from 'cc';
+import { Level2ArtSkin } from './Level2ArtSkin';
 const { ccclass } = _decorator;
 
 /**
- * Existing road-cars sprites were authored for level 1's vertical traffic.
- * Level 2 reuses them on a horizontal road, so presentation rotation stays
- * isolated here instead of leaking asset-specific rules into traffic AI.
+ * Fallback orientation for the legacy level-1 road vehicle sprites.
+ * The dedicated Level2ArtSkin replaces those sprites with horizontal assets.
  */
 @ccclass('Level2VehicleOrientation')
 export class Level2VehicleOrientation extends Component {
     private vehicleLayer: Node | null = null;
+
+    start() {
+        if (!this.node.getComponent(Level2ArtSkin)) this.node.addComponent(Level2ArtSkin);
+    }
 
     update() {
         if (!this.vehicleLayer || !this.vehicleLayer.isValid) {
@@ -20,14 +24,16 @@ export class Level2VehicleOrientation extends Component {
         if (!this.vehicleLayer || !this.vehicleLayer.activeInHierarchy) return;
 
         for (const vehicle of this.vehicleLayer.children) {
-            // Bus art is drawn horizontally by Level2Traffic itself.
-            if (vehicle.name.startsWith('Traffic bus')) {
-                vehicle.setRotationFromEuler(0, 0, vehicle.position.y >= 0 ? 0 : 180);
+            if (vehicle.getChildByName('L2 Art Marker')) {
+                vehicle.setRotationFromEuler(0, 0, 0);
                 continue;
             }
-            // Existing road-cars sprites were authored vertically for level 1.
-            // Upper two lanes move +X, lower two lanes move -X.
-            vehicle.setRotationFromEuler(0, 0, vehicle.position.y >= 0 ? -90 : 90);
+            // Until the new bundle is ready, keep the old level-1 art readable.
+            if (vehicle.name.startsWith('Traffic bus')) {
+                vehicle.setRotationFromEuler(0, 0, vehicle.position.y >= 0 ? 0 : 180);
+            } else {
+                vehicle.setRotationFromEuler(0, 0, vehicle.position.y >= 0 ? -90 : 90);
+            }
         }
     }
 }
