@@ -11,7 +11,7 @@
     "_name": "Main",
     "_objFlags": 0,
     "_parent": null,
-    "_children": [ { "__id__": 15 } ],
+    "_children": [ { "__id__": 16 } ],
     "_active": true,
     "_components": [],
     "_prefab": null,
@@ -167,7 +167,7 @@
     "__type__": "17d365yGBpFlp9jmcmNJlyl",
     "_name": "",
     "_objFlags": 0,
-    "node": { "__id__": 15 },
+    "node": { "__id__": 16 },
     "_enabled": true,
     "__prefab": null,
     "_id": "cat-garden-bootstrap"
@@ -176,7 +176,7 @@
     "__type__": "8c927seTYtLXKbfno8tbBQB",
     "_name": "",
     "_objFlags": 0,
-    "node": { "__id__": 15 },
+    "node": { "__id__": 16 },
     "_enabled": true,
     "__prefab": null,
     "_id": "level2-traffic-bootstrap"
@@ -185,10 +185,19 @@
     "__type__": "91a5bjifSxOz513Xde5/jIB",
     "_name": "",
     "_objFlags": 0,
-    "node": { "__id__": 15 },
+    "node": { "__id__": 16 },
     "_enabled": true,
     "__prefab": null,
     "_id": "level2-menu-presenter"
+  },
+  {
+    "__type__": "c4d73MWlMFCzrOhIaPyfZIB",
+    "_name": "",
+    "_objFlags": 0,
+    "node": { "__id__": 16 },
+    "_enabled": true,
+    "__prefab": null,
+    "_id": "level2-vehicle-orientation"
   },
   {
     "__type__": "cc.Node",
@@ -197,7 +206,7 @@
     "_parent": { "__id__": 1 },
     "_children": [],
     "_active": true,
-    "_components": [ { "__id__": 12 }, { "__id__": 13 }, { "__id__": 14 } ],
+    "_components": [ { "__id__": 12 }, { "__id__": 13 }, { "__id__": 14 }, { "__id__": 15 } ],
     "_prefab": null,
     "_lpos": { "__type__": "cc.Vec3", "z": 0, "x": 0, "y": 0 },
     "_lrot": { "__type__": "cc.Quat", "z": 0, "x": 0, "y": 0, "w": 1 },
