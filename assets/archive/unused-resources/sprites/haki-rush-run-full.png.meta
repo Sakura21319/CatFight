@@ -1,0 +1,5 @@
+{
+  "ver": "1.0.27", "importer": "image", "imported": true, "uuid": "f86b1df5-4b9d-4352-9ae1-95f0d379ad85", "files": [".json", ".png"],
+  "subMetas": {"6c48a": {"importer": "texture", "uuid": "f86b1df5-4b9d-4352-9ae1-95f0d379ad85@6c48a", "displayName": "haki-rush-run-full", "id": "6c48a", "name": "texture", "userData": {"wrapModeS": "clamp", "wrapModeT": "clamp", "minfilter": "nearest", "magfilter": "nearest", "mipfilter": "none", "anisotropy": 0, "isUuid": true, "imageUuidOrDatabaseUri": "f86b1df5-4b9d-4352-9ae1-95f0d379ad85", "visible": false}, "ver": "1.0.22", "imported": true, "files": [".json"], "subMetas": {}}},
+  "userData": {"type": "texture", "fixAlphaTransparencyArtifacts": false, "hasAlpha": true, "redirect": "f86b1df5-4b9d-4352-9ae1-95f0d379ad85@6c48a"}
+}

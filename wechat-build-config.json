@@ -1,0 +1,79 @@
+{
+  "name": "CatFight",
+  "platform": "wechatgame",
+  "buildPath": "project://build",
+  "outputName": "wechatgame",
+  "taskName": "wechatgame",
+  "debug": false,
+  "md5Cache": false,
+  "mainBundleCompressionType": "subpackage",
+  "mainBundleIsRemote": false,
+  "startSceneAssetBundle": false,
+  "nativeCodeBundleMode": "wasm",
+  "startScene": "0a9cbf04-e21a-431e-a58a-156673c2eec5",
+  "scenes": [
+    {
+      "url": "db://assets/scenes/Main.scene",
+      "uuid": "0a9cbf04-e21a-431e-a58a-156673c2eec5"
+    }
+  ],
+  "packages": {
+    "wechatgame": {
+      "orientation": "landscape",
+      "appid": "wxb87c005c1c0b8106",
+      "buildOpenDataContextTemplate": "",
+      "separateEngine": false,
+      "highPerformanceMode": false
+    }
+  },
+  "bundleConfigs": [
+    {
+      "root": "db://assets/bundles/menu-pack",
+      "name": "menu-pack",
+      "priority": 7,
+      "compressionType": "subpackage",
+      "isRemote": false,
+      "output": true
+    },
+    {
+      "root": "db://assets/bundles/road-scene",
+      "name": "road-scene",
+      "priority": 7,
+      "compressionType": "subpackage",
+      "isRemote": false,
+      "output": true
+    },
+    {
+      "root": "db://assets/bundles/road-cars",
+      "name": "road-cars",
+      "priority": 7,
+      "compressionType": "subpackage",
+      "isRemote": false,
+      "output": true
+    },
+    {
+      "root": "db://assets/bundles/road-cat",
+      "name": "road-cat",
+      "priority": 7,
+      "compressionType": "subpackage",
+      "isRemote": false,
+      "output": true
+    },
+    {
+      "root": "db://assets/bundles/gallery-pack",
+      "name": "gallery-pack",
+      "priority": 7,
+      "compressionType": "subpackage",
+      "isRemote": false,
+      "output": true
+    },
+    {
+      "root": "db://assets/bundles/audio-pack",
+      "name": "audio-pack",
+      "priority": 7,
+      "compressionType": "subpackage",
+      "isRemote": false,
+      "output": true
+    }
+  ]
+}

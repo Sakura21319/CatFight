@@ -1,0 +1,9 @@
+{
+  "ver": "1.0.27",
+  "importer": "image",
+  "imported": true,
+  "uuid": "cb7e9c36-1a6d-40cf-9dc8-ff3bfbbb32aa",
+  "files": [".json", ".png"],
+  "subMetas": {"6c48a": {"importer": "texture", "uuid": "cb7e9c36-1a6d-40cf-9dc8-ff3bfbbb32aa@6c48a", "displayName": "honey-rush-item", "id": "6c48a", "name": "texture", "userData": {"wrapModeS": "clamp", "wrapModeT": "clamp", "minfilter": "nearest", "magfilter": "nearest", "mipfilter": "none", "anisotropy": 0, "isUuid": true, "imageUuidOrDatabaseUri": "cb7e9c36-1a6d-40cf-9dc8-ff3bfbbb32aa", "visible": false}, "ver": "1.0.22", "imported": true, "files": [".json"], "subMetas": {}}},
+  "userData": {"type": "texture", "fixAlphaTransparencyArtifacts": false, "hasAlpha": true, "redirect": "cb7e9c36-1a6d-40cf-9dc8-ff3bfbbb32aa@6c48a"}
+}

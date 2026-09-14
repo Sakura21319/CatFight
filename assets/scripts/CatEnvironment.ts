@@ -31,5 +31,9 @@ export class CatEnvironment {
         block(this.cage,'Rest mat',[-4.8,0.025,-3.8],[1.4,0.04,1.1],'#A7B8BB');
     }
     toggle(){this.isCage=!this.isCage;this.garden.active=!this.isCage;this.cage.active=this.isCage;}
+    setWorldVisible(visible:boolean){
+        this.garden.active=visible&&!this.isCage;
+        this.cage.active=visible&&this.isCage;
+    }
     view(yaw:number){for(const wall of this.walls)wall.node.active=wall.x*Math.sin(yaw)+wall.z*Math.cos(yaw)<0.1;}
 }

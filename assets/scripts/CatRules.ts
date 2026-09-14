@@ -1,4 +1,4 @@
-export type CatState = 'Idle' | 'Walk' | 'Hiss' | 'Fight' | 'Recover';
+export type CatState = 'Idle' | 'Walk' | 'Run' | 'Crouch' | 'Lie' | 'Strut' | 'Leap' | 'Threat' | 'Hiss' | 'Fight' | 'Heal' | 'Recover';
 export interface Point { x: number; z: number }
 /** Connected proximity groups prevent the end cats in a three-cat chain fighting. */
 export function proximityGroups(points: Point[], radius: number): number[][] {
