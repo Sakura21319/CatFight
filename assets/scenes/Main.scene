@@ -15,7 +15,7 @@
     "_parent": null,
     "_children": [
       {
-        "__id__": 13
+        "__id__": 14
       }
     ],
     "_active": true,
@@ -257,7 +257,7 @@
     "_firstSetCSM": false,
     "_fixedArea": false,
     "_pcf": 1,
-    "_bias": 1E-05,
+    "_bias": 0.00001,
     "_normalBias": 0,
     "_near": 0.1,
     "_far": 10,
@@ -316,11 +316,22 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 13
+      "__id__": 14
     },
     "_enabled": true,
     "__prefab": null,
     "_id": "cat-garden-bootstrap"
+  },
+  {
+    "__type__": "8c927seTYtLXKbfno8tbBQB",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 14
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_id": "level2-traffic-bootstrap"
   },
   {
     "__type__": "cc.Node",
@@ -334,6 +345,9 @@
     "_components": [
       {
         "__id__": 12
+      },
+      {
+        "__id__": 13
       }
     ],
     "_prefab": null,
